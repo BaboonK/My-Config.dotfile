@@ -43,61 +43,6 @@ output "eDP-1" {
     transform "normal"
 }
 
-layout {
-    gaps 6
-    center-focused-column "on-overflow"
-    preset-column-widths {
-        proportion 0.33333
-        proportion 0.5
-        proportion 0.66667
-        proportion 1.0
-        // Fixed sets the width in logical pixels exactly.
-        // fixed 1920
-    }
-
-    focus-ring {
-        off
-        width 2
-    }
-
-    border {
-        // off
-        width 2
-    }
-
-    shadow {
-        // on
-        softness 30
-        spread 5
-        offset x=0 y=5
-    }
-
-    // noctalia 壁纸配置
-    background-color "transparent"
-}
-
-// noctalia 壁纸配置
-layer-rule {
-  match namespace="^noctalia-wallpaper"
-  place-within-backdrop true
-}
-
-overview {
-  workspace-shadow {
-    off
-  }
-}
-
-cursor {
-    xcursor-theme "/usr/share/icons/Colloid-dark-cursors"
-    xcursor-size 24
-}
-
-hotkey-overlay {
-    // skip-at-startup
-    hide-not-bound
-}
-
 // Uncomment this line to ask the clients to omit their client-side decorations if possible.
 // If the client will specifically ask for CSD, the request will be honored.
 // Additionally, clients will be informed that they are tiled, removing some client-side rounded corners.
@@ -105,23 +50,27 @@ hotkey-overlay {
 // After enabling or disabling this, you need to restart the apps for this to take effect.
 // prefer-no-csd
 
+hotkey-overlay {
+    // skip-at-startup
+    hide-not-bound
+}
+
 screenshot-path "~/Pictures/Screenshots/ from %Y-%m-%d %H-%M-%S.png"
 // You can also set this to null to disable saving screenshots to disk.
 // screenshot-path null
 
-window-rule {
-    geometry-corner-radius 6
-    clip-to-geometry true
+cursor {
+    xcursor-theme "/usr/share/icons/Colloid-dark-cursors"
+    xcursor-size 24
 }
 
-window-rule {
-    match app-id=r#"firefox$"# title="^Picture-in-Picture$"
-    open-floating true
-}
-
-window-rule {
-    match app-id="(?i)wechat"
-    open-focused false
+environment {
+    ELECTRON_OZONE_PLATFORM_HINT "auto"
+    QT_QPA_PLATFORM "wayland"
+    //QT_QPA_PLATFORMTHEME "gtk3"
+    QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
+    XDG_CURRENT_DESKTOP "niri"
+    XDG_SESSION_TYPE "wayland"
 }
 
 binds {
@@ -146,7 +95,7 @@ binds {
     Mod+TouchpadScrollDown { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.02+"; }
     Mod+TouchpadScrollUp   { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.02-"; }
 
-    Mod+E hotkey-overlay-title="Run the filemanager: nemo" { spawn "nemo"; }
+    Mod+E hotkey-overlay-title="Run the filemanager: thunar" { spawn "thunar"; }
     //Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
     Mod+D hotkey-overlay-title="Run an Application: noctalia laucher" { spawn-sh "noctalia msg panel-toggle launcher"; }
     Mod+Return hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
@@ -216,4 +165,6 @@ binds {
 }
 
 include "./animation.kdl"
+include "./rules.kdl"
+include "./layout.kdl"
 include "./noctalia.kdl"

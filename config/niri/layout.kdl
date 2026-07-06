@@ -1,0 +1,61 @@
+layout {
+    gaps 16
+    center-focused-column "never"
+	  always-center-single-column
+
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+    }
+
+    focus-ring {
+        off
+        width 4
+        active-color "#bd5a6f"
+    }
+    
+    border {
+        on
+        width 4
+        active-color "#bd5a6f"
+        inactive-color "transparent"
+    }
+    
+    tab-indicator {
+        on
+        hide-when-single-tab
+        width 6
+        active-color "#d8677f"
+        inactive-color "#5a5a5a"
+        gaps-between-tabs 8
+        corner-radius 18
+    }
+
+    struts {}
+
+    background-color "transparent"
+}
+
+// noctalia 壁纸配置
+layer-rule {
+  match namespace="^noctalia-wallpaper"
+  place-within-backdrop true
+}
+
+overview {
+  workspace-shadow {
+    off
+  }
+}
+
+debug {
+    // Allows notification actions and window activation from Noctalia.
+    honor-xdg-activation-with-invalid-serial
+}
+
+
+blur {
+    passes 1
+    offset 0.01
+}
