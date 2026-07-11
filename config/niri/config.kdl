@@ -1,11 +1,15 @@
 // auto startup
 spawn-at-startup "noctalia"
+//spawn-at-startup "qs" "-c" "noctalia-shell"
 spawn-at-startup "xwayland-satellite"
 spawn-at-startup "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
-spawn-sh-at-startup "systemctl --user restart touch-indicator.service"
+//spawn-sh-at-startup "systemctl --user restart touch-indicator.service"
 
 input {
+    // suspend 电源管理冲突
     disable-power-key-handling
+    
+    // 切换焦点时，把鼠标指针挪到新焦点窗口上
     warp-mouse-to-focus
 
     keyboard {
@@ -25,23 +29,8 @@ input {
         accel-speed 0.0
         accel-profile "flat"
     }
-
-    touch {
-      map-to-output "eDP-1"
-    }
-
-    tablet {
-      map-to-output "eDP-1"
-      //map-to-focused-output
-    }
 }
 
-output "eDP-1" {
-    // off
-    mode "2880x1920@120.000"
-    scale 2
-    transform "normal"
-}
 
 // Uncomment this line to ask the clients to omit their client-side decorations if possible.
 // If the client will specifically ask for CSD, the request will be honored.
@@ -168,7 +157,7 @@ binds {
 
     //Print { screenshot; }
     Mod+S { screenshot-screen; }
-    //Mod+Shift+S { screenshot-window; }
+    Mod+Shift+S { screenshot-window; }
 
     Mod+Shift+E { quit; }
     Ctrl+Alt+Delete { quit; }
@@ -179,7 +168,12 @@ binds {
     Mod+Shift+P { power-off-monitors; }
 }
 
-include "./animation.kdl"
+// include "./animations/blur.kdl"
+// include "./animations/directional.kdl"
+// include "./glitch_00.kdl"
+include "./animations/glitch_01.kdl"
+// include "./animations/pink_shaders.kdl"
+
 include "./rules.kdl"
 include "./layout.kdl"
 include "./noctalia.kdl"

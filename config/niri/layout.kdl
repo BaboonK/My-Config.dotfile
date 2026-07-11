@@ -10,13 +10,13 @@ layout {
     }
 
     focus-ring {
-        off
+        //off
         width 4
         active-color "#bd5a6f"
     }
     
     border {
-        on
+        //on
         width 4
         active-color "#bd5a6f"
         inactive-color "transparent"
@@ -39,8 +39,21 @@ layout {
 
 // noctalia 壁纸配置
 layer-rule {
+  match namespace="^wallpaper$"
   match namespace="^noctalia-wallpaper"
   place-within-backdrop true
+}
+
+layer-rule {
+    match namespace="notifications"
+    shadow {
+        on
+        softness 1
+        spread -10
+        offset x=7 y=22
+        color "#bd5a6fCC"
+        draw-behind-window true
+    }
 }
 
 overview {
@@ -53,7 +66,6 @@ debug {
     // Allows notification actions and window activation from Noctalia.
     honor-xdg-activation-with-invalid-serial
 }
-
 
 blur {
     passes 1
