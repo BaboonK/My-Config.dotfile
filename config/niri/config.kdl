@@ -172,7 +172,9 @@ binds {
 // include "./animations/directional.kdl"
 // include "./glitch_00.kdl"
 // include "./animations/glitch_01.kdl"
+// include "./animations/glitch_02.kdl"
 // include "./animations/pink_shaders.kdl"
+// include "./animations/prism_fold.kdl"
 
 include "./rules.kdl"
 include "./layout.kdl"
