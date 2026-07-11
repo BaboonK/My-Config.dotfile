@@ -68,6 +68,6 @@ debug {
 }
 
 blur {
-    passes 1
-    offset 0.01
+    passes 2
+    offset 1
 }
