@@ -171,7 +171,7 @@ binds {
 // include "./animations/blur.kdl"
 // include "./animations/directional.kdl"
 // include "./glitch_00.kdl"
-include "./animations/glitch_01.kdl"
+// include "./animations/glitch_01.kdl"
 // include "./animations/pink_shaders.kdl"
 
 include "./rules.kdl"
