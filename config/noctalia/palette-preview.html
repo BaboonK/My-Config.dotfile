@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Noctalia Palette Lab</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --page: #111116;
+      --panel: #1b1b22;
+      --line: #34343d;
+      --muted: #9e9ba6;
+      --surface: #070707;
+      --on-surface: #e2d6d8;
+      --variant: #211b1d;
+      --on-variant: #cbbabd;
+      --primary: #ee7277;
+      --on-primary: #1d0d10;
+      --secondary: #d25370;
+      --on-secondary: #fff0f4;
+      --tertiary: #bda0a1;
+      --on-tertiary: #1b1719;
+      --error: #f34f5d;
+      --on-error: #19080b;
+      --outline: #9b3e57;
+      --hover: #431c27;
+      --on-hover: #f2dfe3;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: radial-gradient(circle at 80% 0%, #2a1723 0, var(--page) 34rem);
+      color: #f4eef1;
+      font: 14px/1.45 "IBM Plex Mono", "Noto Sans Mono CJK SC", ui-monospace, monospace;
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .shell { max-width: 1600px; margin: 0 auto; padding: 28px; }
+    .masthead { display: flex; justify-content: space-between; gap: 24px; align-items: end; margin-bottom: 22px; }
+    h1 { font-size: clamp(24px, 4vw, 42px); line-height: 1; letter-spacing: -.06em; margin: 0 0 8px; }
+    .subhead { color: var(--muted); margin: 0; max-width: 760px; }
+    .status { color: #ffc2d6; font-size: 12px; text-align: right; }
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: 10px; padding: 12px;
+      background: color-mix(in srgb, var(--panel) 92%, #fff 8%);
+      border: 1px solid var(--line); border-radius: 8px; margin-bottom: 22px;
+    }
+    .tool, .mode-button {
+      border: 1px solid var(--line); border-radius: 5px; background: #23232c; color: #f4eef1;
+      padding: 8px 11px; transition: border-color .15s, background .15s;
+    }
+    .tool:hover, .mode-button:hover, .mode-button.active { border-color: #e7809b; background: #33212b; }
+    .file-label input { display: none; }
+    .tool.danger { margin-left: auto; }
+    .workspace { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(340px, .8fr); gap: 22px; align-items: start; }
+    .preview-column, .editor-column { min-width: 0; }
+    .section-title { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 0 10px; }
+    .section-title h2 { font-size: 15px; margin: 0; letter-spacing: .04em; }
+    .section-title span { color: var(--muted); font-size: 11px; }
+    .ui-preview { overflow: hidden; background: var(--surface); border: 1px solid var(--outline); border-radius: 10px; box-shadow: 0 20px 60px #0008; }
+    .mock-topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 12px 15px; background: var(--variant); color: var(--on-variant); border-bottom: 1px solid var(--outline); }
+    .wire { color: var(--primary); font-weight: 700; letter-spacing: .08em; }
+    .mock-body { display: grid; grid-template-columns: minmax(145px, .28fr) 1fr; min-height: 505px; }
+    .mock-sidebar { padding: 14px 10px; background: var(--variant); color: var(--on-variant); border-right: 1px solid color-mix(in srgb, var(--outline) 60%, transparent); }
+    .sidebar-item { display: flex; justify-content: space-between; align-items: center; padding: 9px; border-radius: 4px; margin-bottom: 4px; }
+    .sidebar-item.active { background: var(--hover); color: var(--on-hover); }
+    .badge { padding: 1px 6px; font-size: 10px; border: 1px solid currentColor; border-radius: 999px; }
+    .mock-main { padding: clamp(16px, 3vw, 34px); color: var(--on-surface); }
+    .eyebrow { color: var(--secondary); font-size: 11px; font-weight: 700; letter-spacing: .12em; }
+    .mock-main h3 { margin: 6px 0; font-size: clamp(20px, 3vw, 32px); line-height: 1.1; }
+    .mock-main p { margin: 0 0 18px; color: var(--on-variant); max-width: 62ch; }
+    .buttons { display: flex; flex-wrap: wrap; gap: 9px; margin: 18px 0; }
+    .mock-button { padding: 9px 12px; border: 0; border-radius: 4px; font-weight: 700; }
+    .mock-button.primary { background: var(--primary); color: var(--on-primary); }
+    .mock-button.secondary { background: var(--secondary); color: var(--on-secondary); }
+    .mock-button.tertiary { background: var(--tertiary); color: var(--on-tertiary); }
+    .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 20px; }
+    .card { min-height: 105px; padding: 12px; border: 1px solid var(--outline); border-radius: 5px; background: color-mix(in srgb, var(--surface) 76%, var(--variant)); }
+    .card strong { display: block; margin-bottom: 4px; }
+    .card span { color: var(--on-variant); font-size: 11px; }
+    .alert { margin-top: 15px; padding: 11px 12px; border-left: 4px solid var(--error); background: color-mix(in srgb, var(--error) 15%, var(--surface)); color: var(--on-surface); }
+    .role-tag { display: inline-block; border: 1px dashed currentColor; border-radius: 3px; padding: 1px 4px; color: inherit; font-size: 10px; opacity: .8; cursor: pointer; }
+    .terminal { margin-top: 22px; background: var(--surface); border: 1px solid var(--outline); border-radius: 8px; padding: 14px; }
+    .terminal-head { display: flex; justify-content: space-between; color: var(--on-variant); font-size: 11px; margin-bottom: 14px; }
+    .ansi-groups { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .ansi-group h3 { font-size: 11px; color: var(--muted); margin: 0 0 8px; text-transform: uppercase; }
+    .ansi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+    .ansi { position: relative; min-height: 55px; padding: 7px; border: 1px solid #ffffff24; border-radius: 4px; color: #000; cursor: pointer; }
+    .ansi b, .ansi span { display: block; text-shadow: 0 1px #ffffff55; font-size: 10px; }
+    .ansi span { opacity: .72; font-size: 9px; }
+    .drop-zone { margin-top: 18px; border: 1px dashed #79596a; border-radius: 7px; color: var(--muted); padding: 12px; text-align: center; font-size: 12px; }
+    .drop-zone.drag { color: #ffd3e3; border-color: #f28ca9; background: #3d202e; }
+    .editor { background: #17171d; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    .editor-head { position: sticky; top: 0; z-index: 2; background: #202027; padding: 14px; border-bottom: 1px solid var(--line); }
+    .editor-head p { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
+    .field-group { padding: 13px; border-bottom: 1px solid #303039; }
+    .field-group:last-child { border-bottom: 0; }
+    .field-group h3 { font-size: 12px; margin: 0 0 10px; color: #ffc4d8; }
+    .field { display: grid; grid-template-columns: minmax(0, 1fr) 38px 84px; align-items: center; gap: 8px; padding: 5px 0; }
+    .field label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #d5d1d6; font-size: 11px; }
+    .field input[type="color"] { width: 34px; height: 28px; border: 0; padding: 0; background: transparent; }
+    .field input[type="text"] { width: 100%; border: 1px solid #464651; border-radius: 4px; background: #111116; color: #f0eaf0; padding: 5px 6px; font-size: 11px; text-transform: uppercase; }
+    .field.focused { margin: 0 -7px; padding: 6px 7px; background: #38212e; border-radius: 4px; outline: 1px solid #e97f9c; }
+    @media (max-width: 980px) { .workspace { grid-template-columns: 1fr; } .editor-column { order: -1; } .editor { max-height: 48vh; overflow: auto; } }
+    @media (max-width: 620px) { .shell { padding: 15px; } .masthead { display: block; } .status { text-align: left; margin-top: 12px; } .mock-body { grid-template-columns: 1fr; } .mock-sidebar { display: none; } .cards { grid-template-columns: 1fr; } .ansi-groups { grid-template-columns: 1fr; } .tool.danger { margin-left: 0; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <div>
+        <h1>PALETTE / LAB</h1>
+        <p class="subhead">Noctalia 调色板预览。调整色块、查看模拟界面，再用字段名准确描述你希望修改的位置。</p>
+      </div>
+      <div class="status" id="status">Lain-v3 · dark</div>
+    </header>
+    <nav class="toolbar">
+      <label class="tool file-label">载入 JSON<input id="file-input" type="file" accept="application/json,.json"></label>
+      <button class="tool" id="dark-mode">预览 dark</button>
+      <button class="tool" id="light-mode">预览 light</button>
+      <button class="tool" id="export">导出 JSON</button>
+      <button class="tool danger" id="reset">恢复载入值</button>
+    </nav>
+
+    <section class="workspace">
+      <div class="preview-column">
+        <div class="section-title"><h2>UI 模拟</h2><span>点击字段标签可定位颜色编辑器</span></div>
+        <section class="ui-preview">
+          <div class="mock-topbar"><span class="wire">WIRED / 03</span><span class="role-tag" data-path="mSurfaceVariant">mSurfaceVariant</span></div>
+          <div class="mock-body">
+            <aside class="mock-sidebar">
+              <div class="sidebar-item active"><span>signal</span><span class="badge">7</span></div>
+              <div class="sidebar-item">network</div><div class="sidebar-item">memory</div><div class="sidebar-item">protocol</div>
+            </aside>
+            <article class="mock-main">
+              <div class="eyebrow">CONNECTED · <span class="role-tag" data-path="mSecondary">mSecondary</span></div>
+              <h3>Where are you now?</h3>
+              <p><span class="role-tag" data-path="mOnSurface">mOnSurface</span> 为正文；<span class="role-tag" data-path="mOnSurfaceVariant">mOnSurfaceVariant</span> 为辅助文字。</p>
+              <div class="buttons">
+                <button class="mock-button primary"><span class="role-tag" data-path="mPrimary">mPrimary</span></button>
+                <button class="mock-button secondary"><span class="role-tag" data-path="mSecondary">mSecondary</span></button>
+                <button class="mock-button tertiary"><span class="role-tag" data-path="mTertiary">mTertiary</span></button>
+              </div>
+              <div class="cards"><div class="card"><strong>main panel</strong><span>mSurface</span></div><div class="card"><strong>border</strong><span>mOutline</span></div><div class="card"><strong>hover state</strong><span>mHover</span></div></div>
+              <div class="alert"><span class="role-tag" data-path="mError">mError</span> error / destructive action</div>
+            </article>
+          </div>
+        </section>
+        <section class="terminal">
+          <div class="terminal-head"><span>kitty / ANSI 16</span><span>点击色块定位字段</span></div>
+          <div class="ansi-groups" id="ansi-groups"></div>
+        </section>
+        <div class="drop-zone" id="drop-zone">拖入 Noctalia `.json` 调色板以预览</div>
+      </div>
+      <aside class="editor-column">
+        <div class="section-title"><h2>字段编辑器</h2><span>HEX 直接可改</span></div>
+        <section class="editor">
+          <div class="editor-head"><strong id="mode-name">dark</strong><p>修改仅在本页内生效，点击“导出 JSON”保存结果。</p></div>
+          <div id="fields"></div>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const initialPalette = {
+      dark: {
+        mPrimary: '#EE7277', mOnPrimary: '#1D0D10', mSecondary: '#D25370', mOnSecondary: '#FFF0F4',
+        mTertiary: '#BDA0A1', mOnTertiary: '#1B1719', mError: '#F34F5D', mOnError: '#19080B',
+        mSurface: '#070707', mOnSurface: '#E2D6D8', mSurfaceVariant: '#211B1D', mOnSurfaceVariant: '#CBBABD',
+        mOutline: '#9B3E57', mShadow: '#000000', mHover: '#431C27', mOnHover: '#F2DFE3',
+        terminal: {
+          normal: { black: '#1D1A1B', red: '#E9626E', green: '#849067', yellow: '#B4915F', blue: '#7B789B', magenta: '#D45671', cyan: '#768F8C', white: '#D0C4C6' },
+          bright: { black: '#625759', red: '#F58D92', green: '#A2AD84', yellow: '#D0AD78', blue: '#9996B8', magenta: '#E67D92', cyan: '#94ACA8', white: '#F0E5E7' },
+          foreground: '#E2D6D8', background: '#070707', selectionFg: '#F2DFE3', selectionBg: '#521E2D', cursorText: '#070707', cursor: '#EE7277'
+        }
+      },
+      light: {
+        mPrimary: '#B83F52', mOnPrimary: '#FFF7F8', mSecondary: '#92325B', mOnSecondary: '#FFF7FA',
+        mTertiary: '#675B60', mOnTertiary: '#FFFFFF', mError: '#A92339', mOnError: '#FFFFFF',
+        mSurface: '#F1EDEB', mOnSurface: '#342F30', mSurfaceVariant: '#E2DAD8', mOnSurfaceVariant: '#5C5153',
+        mOutline: '#B1A4A5', mShadow: '#CEC5C3', mHover: '#D9C8CC', mOnHover: '#342F30',
+        terminal: {
+          normal: { black: '#403A3B', red: '#A82E44', green: '#596440', yellow: '#7C6034', blue: '#55516E', magenta: '#8C345B', cyan: '#506866', white: '#D8D0CE' },
+          bright: { black: '#706668', red: '#CB4A5E', green: '#75805A', yellow: '#9A7A49', blue: '#716D89', magenta: '#AA5075', cyan: '#6B8380', white: '#F1EDEB' },
+          foreground: '#342F30', background: '#F1EDEB', selectionFg: '#342F30', selectionBg: '#D8B3BC', cursorText: '#F1EDEB', cursor: '#92325B'
+        }
+      }
+    };
+
+    const uiFields = ['mPrimary', 'mOnPrimary', 'mSecondary', 'mOnSecondary', 'mTertiary', 'mOnTertiary', 'mError', 'mOnError', 'mSurface', 'mOnSurface', 'mSurfaceVariant', 'mOnSurfaceVariant', 'mOutline', 'mShadow', 'mHover', 'mOnHover'];
+    const ansiNames = ['black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'];
+    let palette = structuredClone(initialPalette);
+    let loadedPalette = structuredClone(initialPalette);
+    let mode = 'dark';
+    let sourceName = 'Lain-v3';
+
+    function active() { return palette[mode]; }
+    function getValue(path) {
+      return path.split('.').reduce((object, key) => object[key], active());
+    }
+    function setValue(path, value) {
+      const keys = path.split('.'); let object = active();
+      keys.slice(0, -1).forEach(key => { object = object[key]; }); object[keys.at(-1)] = value.toUpperCase();
+    }
+    function cssColor(value) { return /^#[0-9A-F]{8}$/i.test(value) ? value : value; }
+    function inputColor(value) { return value.slice(0, 7); }
+    function isColor(value) { return /^#[0-9A-F]{6}([0-9A-F]{2})?$/i.test(value); }
+
+    function renderVariables() {
+      const colors = active(); const root = document.documentElement;
+      const map = { surface: 'mSurface', 'on-surface': 'mOnSurface', variant: 'mSurfaceVariant', 'on-variant': 'mOnSurfaceVariant', primary: 'mPrimary', 'on-primary': 'mOnPrimary', secondary: 'mSecondary', 'on-secondary': 'mOnSecondary', tertiary: 'mTertiary', 'on-tertiary': 'mOnTertiary', error: 'mError', 'on-error': 'mOnError', outline: 'mOutline', hover: 'mHover', 'on-hover': 'mOnHover' };
+      Object.entries(map).forEach(([cssName, field]) => root.style.setProperty(`--${cssName}`, cssColor(colors[field])));
+      document.body.style.color = colors.mOnSurface;
+      document.getElementById('mode-name').textContent = mode;
+      document.getElementById('status').textContent = `${sourceName} · ${mode}`;
+    }
+
+    function fieldMarkup(path, value) {
+      const safePath = path.replaceAll('.', '__');
+      return `<div class="field" id="field-${safePath}"><label title="${path}">${path}</label><input aria-label="${path} color" data-path="${path}" class="picker" type="color" value="${inputColor(value)}"><input aria-label="${path} hex" data-path="${path}" class="hex" type="text" value="${value}"></div>`;
+    }
+    function renderFields() {
+      const terminal = active().terminal;
+      const groups = [
+        ['Noctalia UI', uiFields.map(field => [field, active()[field]])],
+        ['Terminal Normal', ansiNames.map(field => [`terminal.normal.${field}`, terminal.normal[field]])],
+        ['Terminal Bright', ansiNames.map(field => [`terminal.bright.${field}`, terminal.bright[field]])],
+        ['Terminal Meta', Object.entries(terminal).filter(([key]) => !['normal', 'bright'].includes(key)).map(([field, value]) => [`terminal.${field}`, value])]
+      ];
+      document.getElementById('fields').innerHTML = groups.map(([name, fields]) => `<section class="field-group"><h3>${name}</h3>${fields.map(([path, value]) => fieldMarkup(path, value)).join('')}</section>`).join('');
+      document.querySelectorAll('.picker').forEach(input => input.addEventListener('input', event => {
+        const previous = getValue(event.target.dataset.path); const alpha = previous.length === 9 ? previous.slice(7) : '';
+        setValue(event.target.dataset.path, `${event.target.value}${alpha}`); render();
+      }));
+      document.querySelectorAll('.hex').forEach(input => input.addEventListener('change', event => {
+        const value = event.target.value.trim(); if (isColor(value)) { setValue(event.target.dataset.path, value); render(); } else { event.target.value = getValue(event.target.dataset.path); }
+      }));
+    }
+    function renderAnsi() {
+      const terminal = active().terminal;
+      document.getElementById('ansi-groups').innerHTML = ['normal', 'bright'].map(group => `<section class="ansi-group"><h3>${group}</h3><div class="ansi-grid">${ansiNames.map(name => `<div class="ansi" data-path="terminal.${group}.${name}" style="background:${cssColor(terminal[group][name])}"><b>${name}</b><span>${terminal[group][name]}</span></div>`).join('')}</div></section>`).join('');
+    }
+    function focusField(path) {
+      const field = document.getElementById(`field-${path.replaceAll('.', '__')}`); if (!field) return;
+      document.querySelectorAll('.field.focused').forEach(item => item.classList.remove('focused'));
+      field.classList.add('focused'); field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    function render() { renderVariables(); renderFields(); renderAnsi(); bindPreviewTargets(); }
+    function bindPreviewTargets() {
+      document.querySelectorAll('[data-path]').forEach(element => element.addEventListener('click', event => { event.stopPropagation(); focusField(element.dataset.path); }));
+    }
+    function loadFile(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const candidate = JSON.parse(reader.result);
+          if (!candidate.dark || !candidate.light || !candidate.dark.terminal || !candidate.light.terminal) throw new Error('缺少 dark/light/terminal 字段');
+          palette = structuredClone(candidate); loadedPalette = structuredClone(candidate); sourceName = file.name.replace(/\.json$/i, ''); mode = 'dark'; render();
+        } catch (error) { alert(`无法载入：${error.message}`); }
+      };
+      reader.readAsText(file);
+    }
+    document.getElementById('file-input').addEventListener('change', event => event.target.files[0] && loadFile(event.target.files[0]));
+    document.getElementById('dark-mode').addEventListener('click', () => { mode = 'dark'; render(); });
+    document.getElementById('light-mode').addEventListener('click', () => { mode = 'light'; render(); });
+    document.getElementById('reset').addEventListener('click', () => { palette = structuredClone(loadedPalette); render(); });
+    document.getElementById('export').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(palette, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob);
+      const anchor = Object.assign(document.createElement('a'), { href: url, download: `${sourceName}-edited.json` }); anchor.click(); URL.revokeObjectURL(url);
+    });
+    const dropZone = document.getElementById('drop-zone');
+    ['dragenter', 'dragover'].forEach(eventName => dropZone.addEventListener(eventName, event => { event.preventDefault(); dropZone.classList.add('drag'); }));
+    ['dragleave', 'drop'].forEach(eventName => dropZone.addEventListener(eventName, event => { event.preventDefault(); dropZone.classList.remove('drag'); }));
+    dropZone.addEventListener('drop', event => event.dataTransfer.files[0] && loadFile(event.dataTransfer.files[0]));
+    render();
+  </script>
+</body>
+</html>

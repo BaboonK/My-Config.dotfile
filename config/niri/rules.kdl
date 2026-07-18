@@ -14,7 +14,7 @@ window-rule {
     //    xray true
     //}
 
-    geometry-corner-radius 0
+    geometry-corner-radius 0.1
     clip-to-geometry true
 
     //opacity 0.95
