@@ -3,7 +3,7 @@ window-rule {
 
     shadow {
         on
-        softness 5
+        softness 10
         spread -1
         offset x=10 y=10
         color "#bd5a6fCC"
